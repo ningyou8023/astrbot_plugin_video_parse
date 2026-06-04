@@ -1,0 +1,71 @@
+{
+    "api_url": {
+        "title": "小红书API地址",
+        "description": "小红书解析接口地址",
+        "type": "string",
+        "default": "https://api.nycnm.cn/api/v2/xhs"
+    },
+    "dy_api_url": {
+        "title": "抖音API地址",
+        "description": "抖音解析接口地址",
+        "type": "string",
+        "default": "https://api.nycnm.cn/api/v2/dy"
+    },
+    "ks_api_url": {
+        "title": "快手API地址",
+        "description": "快手解析接口地址",
+        "type": "string",
+        "default": "https://api.nycnm.cn/api/v2/ks"
+    },
+    "doubao_api_url": {
+        "title": "豆包API地址",
+        "description": "豆包解析接口地址",
+        "type": "string",
+        "default": "https://api.nycnm.cn/api/v2/doubao"
+    },
+    "jimeng_api_url": {
+        "title": "即梦AI API地址",
+        "description": "即梦AI解析接口地址",
+        "type": "string",
+        "default": "https://api.nycnm.cn/api/v2/jimengai"
+    },
+    "wxsph_api_url": {
+        "title": "微信视频号API地址",
+        "description": "微信视频号解析接口地址",
+        "type": "string",
+        "default": "https://api.nycnm.cn/api/v2/wxsph"
+    },
+    "qianwen_api_url": {
+        "title": "千问API地址",
+        "description": "千问解析接口地址",
+        "type": "string",
+        "default": "https://api.nycnm.cn/api/v2/qianwen"
+    },
+    "tiktok_api_url": {
+        "title": "TikTok API地址",
+        "description": "TikTok解析接口地址",
+        "type": "string",
+        "default": "https://api.nycnm.cn/api/v2/tiktok"
+    },
+    "api_key": {
+        "title": "API Key",
+        "description": "接口密钥（必填）",
+        "type": "string",
+        "default": ""
+    },
+    "timeout": {
+        "title": "请求超时时间",
+        "description": "接口请求和资源下载超时时间（秒）",
+        "type": "int",
+        "default": 30
+    },
+    "allowed_groups": {
+        "title": "允许解析的群组",
+        "description": "群聊白名单",
+        "type": "list",
+        "items": {
+            "type": "string"
+        },
+        "default": []
+    }
+}

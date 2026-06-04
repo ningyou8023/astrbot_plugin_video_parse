@@ -1,0 +1,9 @@
+name: astrbot_plugin_video_parse
+desc: 聚合视频图文解析插件，目前支持小红书、抖音、快手、微信视频号、豆包、即梦AI、千问、TikTok等解析去水印功能。将解析到的图文、视频内容合并转发发送。
+help: |
+  【自动解析】
+  - 发送带有小红书分享链接的消息，将自动识别并解析
+  示例：`紫色果然很有韵味～ 大姐姐的感觉 http://xhslink.com/o/E1eBgNpHZp 戳进【小红书】看看这篇好文！`
+version: v1.0.1
+author: 柠柚
+repo: https://github.com/ningyou8023/astrbot_plugin_video_parse
