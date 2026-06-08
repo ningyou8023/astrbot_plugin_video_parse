@@ -211,18 +211,30 @@ class VideoParsePlugin(Star):
                     images = [cleaned_image] if cleaned_image.startswith("http") else []
                 elif isinstance(images, list):
                     images = [self._clean_url(img) for img in images if self._clean_url(img).startswith("http")]
-                # 快手视频链接可能在 hd 或 high_bitrate 字段中
+                # 视频链接可能在 url/video/video_url/mp4/hd/high_bitrate 字段中
                 primary_url = self._clean_url(result_data.get("url", ""))
-                # 豆包图文/会话型返回里的 url 是分享页，不是媒体直链，不能当视频发。
+                direct_video_url = (
+                    self._clean_url(result_data.get("video", ""))
+                    or self._clean_url(result_data.get("video_url", ""))
+                    or self._clean_url(result_data.get("mp4", ""))
+                    or self._clean_url(result_data.get("hd", ""))
+                    or self._clean_url(result_data.get("high_bitrate", ""))
+                )
+                # 豆包图文/会话型返回里的 url 是分享页，不是媒体直链；但 mixed/video 要兼容 video 字段。
                 if platform_name == "豆包" and content_type in {"conversation", "image", "images"}:
                     primary_url = ""
-                video_url = primary_url or self._clean_url(result_data.get("hd", "")) or self._clean_url(result_data.get("high_bitrate", ""))
+                video_url = direct_video_url or primary_url
                 videos = result_data.get("videos", [])
                 extra_video_urls = []
                 if isinstance(videos, list):
                     for item in videos:
                         if isinstance(item, dict):
-                            candidate = self._clean_url(item.get("url", "")) or self._clean_url(item.get("video_url", ""))
+                            candidate = (
+                                self._clean_url(item.get("url", ""))
+                                or self._clean_url(item.get("video_url", ""))
+                                or self._clean_url(item.get("video", ""))
+                                or self._clean_url(item.get("mp4", ""))
+                            )
                         else:
                             candidate = self._clean_url(item)
                         if isinstance(candidate, str) and candidate.startswith("http"):
@@ -233,7 +245,15 @@ class VideoParsePlugin(Star):
                     video_backup = result_data.get("video_backup", [])
                     if isinstance(video_backup, list):
                         for item in video_backup:
-                            candidate = self._clean_url(item.get("url", "")) if isinstance(item, dict) else self._clean_url(item)
+                            if isinstance(item, dict):
+                                candidate = (
+                                    self._clean_url(item.get("url", ""))
+                                    or self._clean_url(item.get("video_url", ""))
+                                    or self._clean_url(item.get("video", ""))
+                                    or self._clean_url(item.get("mp4", ""))
+                                )
+                            else:
+                                candidate = self._clean_url(item)
                             if candidate.startswith("http"):
                                 video_url = candidate
                                 break
