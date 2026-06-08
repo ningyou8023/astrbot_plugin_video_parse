@@ -21,13 +21,17 @@ KS_PATTERN = r"http[s]?://[a-zA-Z0-9\-\.]*kuaishou\.com/[a-zA-Z0-9\-\?\=\&\_/\.\
 DOUBAO_PATTERN = r"http[s]?://(?:www\.)?doubao\.com/(?:video-sharing\?[a-zA-Z0-9\-\?\=\&\_/\.\%]+|thread/[a-zA-Z0-9\-\?\=\&\_/\.\%]+)"
 JIMENG_PATTERN = r"http[s]?://(?:www\.)?jimeng\.jianying\.com/s/[a-zA-Z0-9\-\_]+/?(?:\?[a-zA-Z0-9\-\?\=\&\_/\.\%]+)?"
 WXSPH_PATTERN = r"http[s]?://(?:weixin|www\.weixin)\.qq\.com/sph/[a-zA-Z0-9\-_]+(?:\?[a-zA-Z0-9\-\?\=\&\_/\.\%]+)?"
-QIANWEN_PATTERN = r"http[s]?://(?:www\.)?qianwen\.com/share/chat/[a-zA-Z0-9]+(?:\?[a-zA-Z0-9\-\?\=\&\_/\.\%]+)?"
+QIANWEN_PATTERN = (
+    r"http[s]?://(?:(?:www\.)?qianwen\.com/share/chat/[a-zA-Z0-9]+"
+    r"|activity\.qianwen\.com/r/ai-studio-mobile/(?:qwen-external-share|qwen-share))"
+    r"(?:\?[a-zA-Z0-9\-\+\?\=\&\_/\.\%]+)?"
+)
 TIKTOK_PATTERN = r"http[s]?://(?:(?:vt|vm)\.tiktok\.com/[a-zA-Z0-9\-_]+/?|(?:www\.)?tiktok\.com/[a-zA-Z0-9\-\?\=\&\_/\.\%]+)"
 
 PLUGIN_DATA_DIR = Path("data", "plugins_data", "astrbot_plugin_video_parse")
 PLUGIN_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-@register("video_parse", "柠柚", "聚合视频图文解析插件，支持小红书、抖音、快手、微信视频号、豆包、即梦AI、千问、TikTok等", "1.0.1")
+@register("video_parse", "柠柚", "聚合视频图文解析插件，支持小红书、抖音、快手、微信视频号、豆包、即梦AI、千问、TikTok等", "1.0.2")
 class VideoParsePlugin(Star):
     def __init__(self, context: Context, config: AstrBotConfig):
         super().__init__(context)
@@ -149,9 +153,16 @@ class VideoParsePlugin(Star):
         yield event.plain_result(f"⏳ 正在解析{platform_name}中，请稍候...")
         
         try:
+            request_params = {"url": target_url, "apikey": self.api_key}
+            request_url = api_url
+            if platform_name == "千问":
+                separator = "&" if "?" in target_url else "?"
+                request_url = f"{api_url}?url={target_url}{separator}apikey={self.api_key}"
+                request_params = None
+
             async with self.session.get(
-                api_url,
-                params={"url": target_url, "apikey": self.api_key},
+                request_url,
+                params=request_params,
                 timeout=self.timeout,
             ) as resp:
                 if resp.status != 200:
